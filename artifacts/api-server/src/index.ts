@@ -1,10 +1,10 @@
 import path from "node:path";
-import { loadEnvFile } from "node:process";
+
 import "dotenv/config";
 import app from "./app";
 import { logger } from "./lib/logger";
 
-loadEnvFile(path.resolve(__dirname, "../.env"));
+
 
 const rawPort = process.env["PORT"];
 
