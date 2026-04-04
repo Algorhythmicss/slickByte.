@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { Router, type IRouter, type Request, type Response } from "express";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
-import { PrismaClient } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { AnalyzeMealBody, AnalyzeMealResponse, GetMealInsightBody } from "@workspace/api-zod";
 import { isDatabaseConfigured, prisma } from "../lib/prisma";
 
@@ -83,7 +83,7 @@ function getGeminiModel() {
     systemInstruction: ANALYZE_SYSTEM_PROMPT,
     generationConfig: {
       responseMimeType: "application/json",
-      responseSchema: ANALYZE_RESPONSE_SCHEMA,
+     
       temperature: 0.2,
       topP: 0.8,
       topK: 32,
@@ -482,13 +482,13 @@ async function consumeDailyAnalyzeQuota(
         return { allowed: true as const, requestCount: requestCount + 1 };
       },
       {
-        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        isolationLevel: "Serializable"
       },
     );
 
     return result;
   } catch (err) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2034") {
+    if ((err as any)?.code === "P2034") {
       req.log.warn({ err, userKey }, "Rate limit transaction conflict");
     } else {
       req.log.warn({ err, userKey }, "Failed to enforce meal analysis rate limit");
