@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SlickByte | The Living Atelier</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Manrope:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed-variant": "#674b31",
+              "surface-tint": "#5a694b",
+              "tertiary-container": "#f3caa8",
+              "tertiary-dim": "#705238",
+              "surface-dim": "#e4e3d6",
+              "secondary-dim": "#6d4e6f",
+              "on-surface": "#373831",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed-dim": "#e4bc9b",
+              "on-surface-variant": "#64655c",
+              "primary-container": "#d7e8c3",
+              "error-dim": "#821a01",
+              "inverse-surface": "#0e0e0c",
+              "surface-container": "#f6f4ec",
+              "error": "#b23d21",
+              "surface-bright": "#fffcf7",
+              "secondary-container": "#ffd6fe",
+              "outline-variant": "#babaaf",
+              "on-secondary-fixed": "#523555",
+              "surface": "#fffcf7",
+              "outline": "#818178",
+              "surface-container-high": "#f0eee4",
+              "surface-variant": "#eae9dd",
+              "on-tertiary-fixed": "#482f17",
+              "secondary-fixed": "#ffd6fe",
+              "on-primary": "#ffffff",
+              "tertiary": "#7d5e43",
+              "primary-fixed-dim": "#c9dab5",
+              "primary-fixed": "#d7e8c3",
+              "surface-container-highest": "#eae9dd",
+              "inverse-on-surface": "#9e9d98",
+              "secondary-fixed-dim": "#f0c8ef",
+              "primary": "#5a694b",
+              "on-primary-fixed": "#364329",
+              "on-error": "#ffffff",
+              "secondary": "#7a597c",
+              "surface-container-lowest": "#ffffff",
+              "on-background": "#373831",
+              "on-primary-fixed-variant": "#516043",
+              "primary-dim": "#4e5d40",
+              "inverse-primary": "#e6f7d0",
+              "on-secondary-fixed-variant": "#715172",
+              "surface-container-low": "#fcf9f3",
+              "background": "#fffcf7",
+              "on-secondary-container": "#664768",
+              "on-tertiary-container": "#5d4228",
+              "tertiary-fixed": "#f3caa8",
+              "on-primary-container": "#48563a",
+              "on-error-container": "#671200",
+              "on-secondary": "#ffffff",
+              "error-container": "#fa7150"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .whispr-flow-bg {
+            background: radial-gradient(circle at 0% 0%, rgba(215, 232, 195, 0.4) 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, rgba(255, 214, 254, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(243, 202, 168, 0.2) 0%, transparent 50%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Top Navigation -->
+<nav class="bg-white/70 dark:bg-stone-900/70 backdrop-blur-xl docked full-width top-0 z-50 sticky shadow-[0_20px_40px_rgba(81,96,67,0.06)]">
+<div class="max-w-7xl mx-auto flex justify-between items-center w-full px-8 py-4">
+<div class="flex items-center gap-12">
+<span class="font-epilogue tracking-tight text-2xl font-bold text-emerald-900 dark:text-emerald-100">SlickByte</span>
+<div class="hidden md:flex items-center gap-8 font-epilogue tracking-tight">
+<a class="text-emerald-900 dark:text-emerald-100 font-semibold border-b-2 border-emerald-800 dark:border-emerald-200 pb-1" href="#">Explore</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors" href="#">Diary</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors" href="#">Analytics</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors" href="#">Community</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-full font-epilogue tracking-tight font-semibold scale-95 active:scale-90 transition-transform cursor-pointer">
+<span>Upload Meal</span>
+</div>
+<button class="p-2 hover:bg-stone-100/50 dark:hover:bg-stone-800/50 rounded-full transition-all">
+<span class="material-symbols-outlined text-stone-500">notifications</span>
+</button>
+<button class="p-2 hover:bg-stone-100/50 dark:hover:bg-stone-800/50 rounded-full transition-all">
+<span class="material-symbols-outlined text-stone-500">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center overflow-hidden whispr-flow-bg">
+<div class="max-w-7xl mx-auto px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-20">
+<div class="lg:col-span-7 space-y-8">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-container/40 text-on-primary-container text-sm font-label uppercase tracking-widest font-semibold">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                        Nutrition Redefined
+                    </div>
+<h1 class="font-headline text-6xl md:text-8xl font-extrabold text-on-surface leading-[0.95] -tracking-[0.04em]">
+                        Your Meals, <br/>
+<span class="text-primary italic">SlickByte-Decoded.</span>
+</h1>
+<p class="text-xl md:text-2xl text-on-surface-variant max-w-xl leading-relaxed font-body">Transforming the chore of tracking into a mesmerizing ritual. Simple snaps, profound insights, and a journey that feels like home with SlickByte.</p>
+<div class="flex flex-wrap gap-6 pt-4">
+<button class="px-10 py-5 bg-gradient-to-br from-primary to-primary-dim text-on-primary rounded-full font-headline font-bold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            Start Journey
+                        </button>
+<button class="px-10 py-5 bg-surface-container-high text-on-surface rounded-full font-headline font-bold text-lg hover:bg-surface-container-highest transition-all flex items-center gap-2">
+                            How it works
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="lg:col-span-5 relative">
+<div class="relative z-10 rounded-xl overflow-hidden shadow-[0_40px_80px_rgba(81,96,67,0.12)] -rotate-3 border-8 border-white">
+<img alt="Deliciously decoded meal" class="w-full h-[500px] object-cover" data-alt="Close-up aesthetic shot of a healthy poke bowl with vibrant salmon, avocado, and greens on a minimalist ceramic table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXnQaGwsqhoGm4bXin-_vtldJM56lU2R0c7orEkKB-K1qBmrqCuNCPf4wT52qskAzYSGf1zNsP0QowjiRfx_DXBhzn_Ym9IWFSCECycAz4bKR8NUDkylWQqzvT4r2WJZGWLdL44TFV_74m7I0KedtMCmuGP8l-_mVkfHurI92mxse2NkTQWsCYYxNuC-S2n8nTBbq_udrSq2QVLbrZkHWhW1nJfQ-Ow2qxW5jX_by82_llFATC2dZP6r_3uMSwC7GtKDx5bBR8zLE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+<div class="absolute bottom-6 left-6 right-6 glass-card p-6 rounded-lg">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-label font-bold text-primary text-xs tracking-widest uppercase">Decoded Analysis</p>
+<h3 class="font-headline font-bold text-2xl mt-1">Poke Balance Bowl</h3>
+</div>
+<div class="text-right">
+<span class="font-headline font-extrabold text-3xl">480</span>
+<span class="text-xs uppercase font-label block">kcal</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Decorative Floating Elements -->
+<div class="absolute -top-12 -right-8 w-48 h-48 bg-secondary-container/40 rounded-full blur-3xl -z-10"></div>
+<div class="absolute -bottom-12 -left-8 w-64 h-64 bg-tertiary-container/30 rounded-full blur-3xl -z-10"></div>
+</div>
+</div>
+</section><section class="py-20 bg-surface-container-low relative overflow-hidden">
+<div class="absolute inset-0 whispr-flow-bg opacity-30 -z-10"></div>
+<div class="max-w-7xl mx-auto px-8">
+<div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl p-8 md:p-12 shadow-2xl">
+<div class="flex flex-col lg:flex-row gap-12 items-center">
+<div class="w-full lg:w-1/2 space-y-6">
+<h2 class="font-headline text-4xl font-bold tracking-tight text-on-surface">Share your culinary moment.</h2>
+<p class="text-lg text-on-surface-variant font-body">SlickByte's AI is ready to decode your meal's story. Simply upload a photo and tell us a bit about it.</p>
+<div class="space-y-4">
+<label class="block font-label text-sm font-bold uppercase tracking-wider text-primary">Meal Context</label>
+<textarea class="w-full bg-surface-container border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 min-h-[120px] text-on-surface placeholder:text-on-surface-variant/50 transition-all font-body" placeholder="Tell us about your meal... maybe where you are, or how you're feeling?"></textarea>
+</div>
+</div>
+<div class="w-full lg:w-1/2">
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/20 via-secondary/20 to-tertiary/20 rounded-xl blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+<button class="relative w-full aspect-video md:aspect-[4/3] border-4 border-dashed border-primary/20 rounded-xl flex flex-col items-center justify-center gap-4 bg-white/50 hover:bg-white/80 transition-all group-hover:border-primary/50">
+<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-4xl">add_a_photo</span>
+</div>
+<div class="text-center">
+<span class="block font-headline font-bold text-xl text-on-surface">Upload Photo</span>
+<span class="text-sm text-on-surface-variant font-body uppercase tracking-widest mt-1">Tap to browse or drag &amp; drop</span>
+</div>
+</button>
+</div>
+<div class="mt-8 flex justify-end">
+<button class="px-10 py-4 bg-primary text-on-primary rounded-full font-headline font-bold text-lg hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center gap-2">
+              Analyze with SlickByte
+              <span class="material-symbols-outlined">auto_awesome</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-32 bg-surface">
+<div class="max-w-7xl mx-auto px-8">
+<div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
+<h2 class="font-headline text-4xl md:text-5xl font-bold tracking-tight">One snap, endless wisdom.</h2>
+<p class="text-lg text-on-surface-variant font-body">Experience the SlickByte Flow - a seamless transition from sight to insight.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 h-auto lg:h-[700px]">
+<!-- Large Feature: Snap -->
+<div class="md:col-span-8 bg-surface-container rounded-xl p-12 flex flex-col justify-between group hover:bg-surface-container-low transition-all">
+<div class="max-w-md">
+<span class="material-symbols-outlined text-5xl text-primary mb-6" data-weight="fill">photo_camera</span>
+<h3 class="font-headline text-3xl font-bold mb-4">Snap with Intent</h3>
+<p class="text-on-surface-variant leading-relaxed">Our computer vision doesn't just see pixels; it understands ingredients. Simply point your camera and let SlickByte recognize every element of your culinary masterpiece.</p>
+</div>
+<div class="mt-12 overflow-hidden rounded-lg">
+<img alt="Snap and Track" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-700" data-alt="High-angle view of hands holding a smartphone photographing a fresh Mediterranean salad on a wooden table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi4kwmejq2VCXOldNTYPcEPAV9-mIx1Ym9C5nXljwKlDz6Ps8rc9JX15tbILlgx1EXlhKx_uJzu1yj2n4JnB4LWhDeeJ_uowLJHSU4J3IKDznsB0ksJLIpARVD6KYdI3pz85kuSgA2FlHJCfPh0i0pVChuJ8BFpHn3PNE8r2uZPvz8jKoFAxQuej7LmlWTU2gY7S8Yw2IsAvOIRFqnsxUL6KfMvSMJYbglDTsea8WxLpfQBBy-PteDtizMrJMnrBdbg3jWY_lIZNA"/>
+</div>
+</div>
+<!-- Small Feature: Process -->
+<div class="md:col-span-4 bg-secondary-container/20 rounded-xl p-10 flex flex-col justify-center border border-secondary-container/10">
+<span class="material-symbols-outlined text-4xl text-secondary mb-6">psychology</span>
+<h3 class="font-headline text-2xl font-bold mb-3">Process Instantly</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Real-time nutritional mapping that converts images into data streams within milliseconds. No manual entry, no stress.</p>
+</div>
+<!-- Small Feature: Understand -->
+<div class="md:col-span-4 bg-tertiary-container/20 rounded-xl p-10 flex flex-col justify-center border border-tertiary-container/10">
+<span class="material-symbols-outlined text-4xl text-tertiary mb-6">insights</span>
+<h3 class="font-headline text-2xl font-bold mb-3">Deep Understanding</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Go beyond calories. Understand how your meal affects your glucose levels, energy spikes, and long-term vitality goals.</p>
+</div>
+<!-- Medium Feature: Track -->
+<div class="md:col-span-8 bg-surface-container-high rounded-xl p-10 flex items-center gap-12 overflow-hidden">
+<div class="flex-1">
+<span class="material-symbols-outlined text-4xl text-primary mb-6">timeline</span>
+<h3 class="font-headline text-2xl font-bold mb-3">Effortless Tracking</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Your journey visualized in a beautiful, non-clinical dashboard that celebrates progress over perfection.</p>
+</div>
+<div class="hidden lg:block w-1/2 -mr-20">
+<div class="bg-surface rounded-lg shadow-2xl p-6 rotate-6 translate-y-8">
+<div class="space-y-4">
+<div class="h-2 w-3/4 bg-primary-container rounded-full"></div>
+<div class="h-2 w-1/2 bg-secondary-container rounded-full"></div>
+<div class="h-2 w-5/6 bg-tertiary-container rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- The "Whispr Flow" Experience -->
+<section class="py-24 bg-surface-container-lowest overflow-hidden">
+<div class="max-w-7xl mx-auto px-8">
+<div class="flex flex-col lg:flex-row items-center gap-20">
+<div class="lg:w-1/2 space-y-8">
+<h2 class="font-headline text-5xl font-bold leading-tight -tracking-tight">Designed for the <br/><span class="text-secondary">Mindful Eater.</span></h2>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg mb-1">SlickByte AI Engine</h4>
+<p class="text-on-surface-variant">The soul of our system. A proprietary AI that learns your palate and provides gentle nudges instead of strict warnings.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-secondary">palette</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg mb-1">The Living Atelier Aesthetic</h4>
+<p class="text-on-surface-variant">We believe that tracking your health should be as beautiful as the meals you enjoy. Every interface element is crafted for calm.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-tertiary">spa</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg mb-1">Ritual over Routine</h4>
+<p class="text-on-surface-variant">Move away from "logging" and toward "appreciating." SlickByte builds a bridge between hunger and true nourishment.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:w-1/2 relative">
+<div class="w-full aspect-square rounded-[3rem] bg-gradient-to-tr from-primary-container to-secondary-container absolute top-10 right-10 -z-10 blur-2xl opacity-30"></div>
+<img alt="The Living Atelier Food Philosophy" class="rounded-xl shadow-2xl object-cover w-full h-[600px]" data-alt="Minimalist top-down view of healthy meal prep ingredients: avocados, eggs, nuts, and greens arranged on a light stone surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtuUMILNuxVCz0Ux8azn2W764xoTDK9lvK9Dha1uLlduNRBDa8XTkUjQy8Qn_rhVyppuZZLxrt_I2K84oWDN2HCwR-l6Dsa4HFSSQm0LR6r01wV4yiYugrq38nGgBNxiz9aGjsMPJbGnLzJ5TmUBBJUoazBr0RfB_MdqTXQSMrlKlA08-S8vWDCOyx4rgArehik7NrZwiMmAryDvNAAlZz20aAGnBZGANsIoaEgbIs5zM-0hxBP3rmmaeRGN596-Ad2HHvII-Os-4"/>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 bg-surface">
+<div class="max-w-5xl mx-auto px-8">
+<div class="bg-primary-container/20 rounded-xl p-16 text-center space-y-8 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-full whispr-flow-bg opacity-40 -z-10"></div>
+<h2 class="font-headline text-4xl md:text-5xl font-extrabold -tracking-tight">Ready to hear what <br/>your food has to say?</h2>
+<p class="text-xl text-on-surface-variant max-w-2xl mx-auto">Join 50,000+ mindful explorers who have transformed their relationship with nutrition through SlickByte.</p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+<button class="w-full sm:w-auto px-12 py-5 bg-primary text-on-primary rounded-full font-headline font-bold text-lg hover:scale-105 transition-transform shadow-lg">
+                            Begin Onboarding
+                        </button>
+<p class="text-sm font-label text-on-surface-variant uppercase tracking-widest px-4">No subscription required to start.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-stone-50 dark:bg-stone-950 w-full py-12 px-8 tonal-transition via background-color-shift">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col items-center md:items-start gap-4">
+<span class="font-epilogue font-bold text-emerald-800 text-2xl">SlickByte</span>
+<p class="font-manrope text-sm leading-relaxed text-stone-400 dark:text-stone-600 max-w-xs text-center md:text-left">© 2024 SlickByte. The Living Atelier.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="font-manrope text-sm leading-relaxed text-stone-400 dark:text-stone-600 hover:text-emerald-600 transition-colors" href="#">Privacy</a>
+<a class="font-manrope text-sm leading-relaxed text-stone-400 dark:text-stone-600 hover:text-emerald-600 transition-colors" href="#">Terms</a>
+<a class="font-manrope text-sm leading-relaxed text-stone-400 dark:text-stone-600 hover:text-emerald-600 transition-colors" href="#">Methodology</a>
+<a class="font-manrope text-sm leading-relaxed text-stone-400 dark:text-stone-600 hover:text-emerald-600 transition-colors" href="#">Contact</a>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full border border-stone-200 dark:border-stone-800 flex items-center justify-center text-stone-400 hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-sm">public</span>
+</div>
+<div class="w-10 h-10 rounded-full border border-stone-200 dark:border-stone-800 flex items-center justify-center text-stone-400 hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-sm">share</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

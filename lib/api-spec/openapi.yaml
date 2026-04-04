@@ -1,0 +1,230 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: SlickByte API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: meals
+    description: Meal analysis operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /meals/analyze:
+    post:
+      operationId: analyzeMeal
+      tags: [meals]
+      summary: Analyze a meal photo
+      description: Upload a base64-encoded image and receive nutritional analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeMealBody"
+      responses:
+        "200":
+          description: Meal analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealAnalysis"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: Daily rate limit reached
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /meals/insight:
+    post:
+      operationId: getMealInsight
+      tags: [meals]
+      summary: Get a specific insight about a meal
+      description: Get a smart follow-up insight about an analyzed meal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetMealInsightBody"
+      responses:
+        "200":
+          description: Meal insight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealInsight"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    AnalyzeMealBody:
+      type: object
+      properties:
+        imageBase64:
+          type: string
+          description: Base64-encoded image data (without data URL prefix)
+        mimeType:
+          type: string
+          description: Image MIME type (e.g. image/jpeg)
+          default: image/jpeg
+        prompt:
+          type: string
+          description: Optional extra context from user about the meal
+        portion:
+          type: string
+          enum: [small, medium, large]
+          default: medium
+          description: User-indicated portion size hint
+        plateSize:
+          type: string
+          enum: [small_plate, medium_plate, large_plate]
+          default: medium_plate
+          description: Plate size used as a scale reference
+      required:
+        - imageBase64
+    MealAnalysis:
+      type: object
+      properties:
+        foodName:
+          type: string
+          description: Name of the detected food
+        calories:
+          type: number
+          description: Estimated calorie count
+        confidence:
+          type: string
+          enum: [high, medium, low]
+          description: AI confidence level
+        quickInsight:
+          type: string
+          description: Quick nutritional insight (e.g. High carb, moderate protein)
+        macros:
+          $ref: "#/components/schemas/Macros"
+        healthScore:
+          type: number
+          description: Health score out of 10
+        suggestions:
+          type: array
+          items:
+            type: string
+          description: List of health suggestions
+        ingredients:
+          type: array
+          items:
+            type: string
+          description: Detected ingredients
+        cached:
+          type: boolean
+          description: Whether the result came from a previous cached analysis
+        note:
+          type: string
+          description: Optional note about cache reuse
+      required:
+        - foodName
+        - calories
+        - confidence
+        - quickInsight
+        - macros
+        - healthScore
+        - suggestions
+        - ingredients
+    Macros:
+      type: object
+      properties:
+        protein:
+          type: number
+          description: Protein in grams
+        carbs:
+          type: number
+          description: Carbohydrates in grams
+        fats:
+          type: number
+          description: Fats in grams
+        fiber:
+          type: number
+          description: Fiber in grams
+      required:
+        - protein
+        - carbs
+        - fats
+        - fiber
+    GetMealInsightBody:
+      type: object
+      properties:
+        mealAnalysis:
+          $ref: "#/components/schemas/MealAnalysis"
+        insightType:
+          type: string
+          enum: [protein_breakdown, make_healthier, fat_loss]
+          description: Type of insight to retrieve
+      required:
+        - mealAnalysis
+        - insightType
+    MealInsight:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Insight title
+        content:
+          type: string
+          description: Detailed insight content
+        tips:
+          type: array
+          items:
+            type: string
+          description: Actionable tips
+      required:
+        - title
+        - content
+        - tips
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message

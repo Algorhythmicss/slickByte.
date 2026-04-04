@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model MealAnalysis {
+  id           String   @id @default(uuid()) @db.Uuid
+  imageHash    String
+  prompt       String   @default("")
+  portion      String
+  plateSize    String
+  foodName     String
+  calories     Float
+  protein      Float
+  carbs        Float
+  fats         Float
+  fiber        Float
+  healthScore  Float
+  confidence   String
+  quickInsight String
+  suggestions  String[]
+  ingredients  String[]
+  createdAt    DateTime @default(now())
+
+  @@unique([imageHash, prompt, portion, plateSize])
+}
+
+model UserRequest {
+  id        String   @id @default(uuid()) @db.Uuid
+  userKey   String   @default("anonymous")
+  imageHash String
+  prompt    String?
+  portion   String
+  plateSize String
+  createdAt DateTime @default(now())
+
+  @@index([imageHash])
+  @@index([createdAt])
+  @@index([userKey, createdAt])
+}

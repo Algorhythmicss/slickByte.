@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Meal Analysis | SlickByte</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed-variant": "#674b31",
+                        "surface-tint": "#5a694b",
+                        "tertiary-container": "#f3caa8",
+                        "tertiary-dim": "#705238",
+                        "surface-dim": "#e4e3d6",
+                        "secondary-dim": "#6d4e6f",
+                        "on-surface": "#373831",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#e4bc9b",
+                        "on-surface-variant": "#64655c",
+                        "primary-container": "#d7e8c3",
+                        "error-dim": "#821a01",
+                        "inverse-surface": "#0e0e0c",
+                        "surface-container": "#f6f4ec",
+                        "error": "#b23d21",
+                        "surface-bright": "#fffcf7",
+                        "secondary-container": "#ffd6fe",
+                        "outline-variant": "#babaaf",
+                        "on-secondary-fixed": "#523555",
+                        "surface": "#fffcf7",
+                        "outline": "#818178",
+                        "surface-container-high": "#f0eee4",
+                        "surface-variant": "#eae9dd",
+                        "on-tertiary-fixed": "#482f17",
+                        "secondary-fixed": "#ffd6fe",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#7d5e43",
+                        "primary-fixed-dim": "#c9dab5",
+                        "primary-fixed": "#d7e8c3",
+                        "surface-container-highest": "#eae9dd",
+                        "inverse-on-surface": "#9e9d98",
+                        "secondary-fixed-dim": "#f0c8ef",
+                        "primary": "#5a694b",
+                        "on-primary-fixed": "#364329",
+                        "on-error": "#ffffff",
+                        "secondary": "#7a597c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#373831",
+                        "on-primary-fixed-variant": "#516043",
+                        "primary-dim": "#4e5d40",
+                        "inverse-primary": "#e6f7d0",
+                        "on-secondary-fixed-variant": "#715172",
+                        "surface-container-low": "#fcf9f3",
+                        "background": "#fffcf7",
+                        "on-secondary-container": "#664768",
+                        "on-tertiary-container": "#5d4228",
+                        "tertiary-fixed": "#f3caa8",
+                        "on-primary-container": "#48563a",
+                        "on-error-container": "#671200",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#fa7150"
+                    },
+                    fontFamily: {
+                        "headline": ["Epilogue"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .whispr-glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Shell -->
+<header class="bg-white/70 dark:bg-stone-900/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(81,96,67,0.06)] docked full-width top-0 z-50 sticky">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+<div class="font-epilogue tracking-tight text-2xl font-bold text-emerald-900 dark:text-emerald-100">SlickByte</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-manrope" href="#">Explore</a>
+<a class="text-emerald-900 dark:text-emerald-100 font-semibold border-b-2 border-emerald-800 dark:border-emerald-200 pb-1 font-manrope" href="#">Diary</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-manrope" href="#">Analytics</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-manrope" href="#">Community</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-full font-semibold scale-95 active:scale-90 transition-transform">
+                    Upload Meal
+                </button>
+<span class="material-symbols-outlined p-2 text-stone-500 hover:bg-stone-100/50 rounded-full transition-all cursor-pointer">notifications</span>
+<span class="material-symbols-outlined p-2 text-stone-500 hover:bg-stone-100/50 rounded-full transition-all cursor-pointer">account_circle</span>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-8 py-12">
+<!-- Hero Section: Asymmetric Meal Presentation -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Left: The Visual Canvas -->
+<div class="lg:col-span-7 relative group">
+<div class="relative overflow-hidden rounded-xl bg-surface-container shadow-[0_20px_40px_rgba(81,96,67,0.06)]">
+<img alt="Fresh harvest bowl" class="w-full h-[600px] object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Close-up of an aesthetic harvest bowl with roasted sweet potato, kale, quinoa, and avocado on a ceramic plate with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy7QqUDPzFqCiRjHJ2YpvBf-ZVXRXHJtPVS4IOCDFdUdSqEF2qz9Cl0JjXAJPedSUqtbBiiROTURPdMLKJDq5UFn_c_gKTBUkUPlBxKVGtzxdg5ZIrdqut34KnKPgbubWCocQ3nqsOKyKlpLLDaOINOcclwg22NA3jgwasH18iaP9MrB-w4k1vAR7Ux8eU2dqB4TXQ2AUFl3MsdZ_T9Dc_p9fsbyKG_CDLSVg25x4E6CQhLEU8NwTmK4BraLTNXX9iibbZNSPgUx4"/>
+<!-- Ingredient Overlays (Floating Labels) -->
+<div class="absolute inset-0 pointer-events-none">
+<div class="absolute top-[20%] left-[30%] whispr-glass px-4 py-2 rounded-full border border-white/20 animate-pulse">
+<span class="text-xs font-label tracking-widest text-on-surface uppercase block opacity-60">BASE</span>
+<span class="font-headline font-bold text-sm">Quinoa &amp; Kale</span>
+</div>
+<div class="absolute bottom-[35%] right-[25%] whispr-glass px-4 py-2 rounded-full border border-white/20">
+<span class="text-xs font-label tracking-widest text-on-surface uppercase block opacity-60">PROTEIN</span>
+<span class="font-headline font-bold text-sm">Grilled Salmon</span>
+</div>
+<div class="absolute top-[45%] right-[15%] whispr-glass px-4 py-2 rounded-full border border-white/20">
+<span class="text-xs font-label tracking-widest text-on-surface uppercase block opacity-60">FAT</span>
+<span class="font-headline font-bold text-sm">Ripe Avocado</span>
+</div>
+</div>
+</div>
+<!-- Floating Calories - The "Soul" Gradient -->
+<div class="absolute -bottom-6 -right-6 lg:-right-12 bg-gradient-to-br from-primary to-primary-container text-on-primary p-12 rounded-xl shadow-xl z-10 flex flex-col items-center justify-center">
+<span class="text-sm font-label tracking-[0.2em] uppercase opacity-80 mb-1">Total Calories</span>
+<span class="font-headline text-5xl font-extrabold tracking-tighter">482</span>
+<span class="text-xs font-body mt-2 opacity-90 italic">Perfectly balanced</span>
+</div>
+</div>
+<!-- Right: The Analytical Flow -->
+<div class="lg:col-span-5 space-y-12 pt-8 lg:pt-0">
+<header class="space-y-2">
+<h1 class="font-headline text-5xl font-extrabold tracking-tight text-on-surface leading-tight">
+                        Mediterranean <br/> <span class="text-primary italic font-normal">Vitality Bowl</span>
+</h1>
+<p class="text-on-surface-variant font-body text-lg max-w-sm">
+                        Captured at 12:45 PM. A vibrant blend of complex carbs and healthy fats.
+                    </p>
+</header>
+<!-- Macro Breakdown Bento Grid -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Protein -->
+<div class="bg-surface-container-low p-6 rounded-lg space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-xs font-label tracking-widest uppercase text-primary">Protein</span>
+<span class="font-headline font-bold text-xl">32g</span>
+</div>
+<div class="w-full h-3 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+<!-- Carbs -->
+<div class="bg-surface-container-low p-6 rounded-lg space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-xs font-label tracking-widest uppercase text-tertiary">Carbs</span>
+<span class="font-headline font-bold text-xl">45g</span>
+</div>
+<div class="w-full h-3 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 48%;"></div>
+</div>
+</div>
+<!-- Fats -->
+<div class="bg-surface-container-low p-6 rounded-lg space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-xs font-label tracking-widest uppercase text-secondary">Fats</span>
+<span class="font-headline font-bold text-xl|">18g</span>
+</div>
+<div class="w-full h-3 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 32%;"></div>
+</div>
+</div>
+<!-- Fiber -->
+<div class="bg-surface-container-low p-6 rounded-lg space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-xs font-label tracking-widest uppercase text-on-tertiary-fixed-variant">Fiber</span>
+<span class="font-headline font-bold text-xl">12g</span>
+</div>
+<div class="w-full h-3 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-tertiary-container h-full rounded-full" style="width: 80%;"></div>
+</div>
+</div>
+</div>
+<!-- AI Whispr Suggestions -->
+<div class="relative">
+<div class="absolute -top-4 -left-4 bg-secondary-container p-3 rounded-full shadow-sm z-20">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="whispr-glass rounded-lg p-8 border border-secondary-container/30 shadow-[0_20px_40px_rgba(81,96,67,0.06)] space-y-4">
+<h3 class="font-headline font-bold text-xl text-on-secondary-container">SlickByte Suggestions</h3>
+<ul class="space-y-6">
+<li class="flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary mt-1">check_circle</span>
+<p class="text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface">Great choice of fiber!</strong> The kale and quinoa base provides excellent slow-release energy for your afternoon.
+                                </p>
+</li>
+<li class="flex gap-4 items-start">
+<span class="material-symbols-outlined text-tertiary mt-1">lightbulb</span>
+<p class="text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface">Pro tip:</strong> Add a squeeze of lemon to increase vitamin C, which will help you absorb the iron from the kale.
+                                </p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Tonal Transition Section: Related Insights -->
+<section class="mt-32 space-y-8">
+<div class="flex justify-between items-end">
+<h2 class="font-headline text-3xl font-bold">Your Daily Narrative</h2>
+<a class="text-primary font-semibold flex items-center gap-2 hover:translate-x-1 transition-transform" href="#">
+                    View Diary <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<!-- Horizontal Scroll Bento -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-surface-container-high p-10 rounded-xl space-y-6 flex flex-col justify-between h-64 hover:bg-surface-container-highest transition-colors cursor-pointer">
+<span class="text-xs font-label tracking-widest uppercase opacity-60">Remaining</span>
+<div>
+<span class="block font-headline text-4xl font-bold">1,218</span>
+<span class="text-on-surface-variant">kcal for the day</span>
+</div>
+</div>
+<div class="bg-secondary-container/20 p-10 rounded-xl space-y-6 flex flex-col justify-between h-64 hover:bg-secondary-container/30 transition-colors cursor-pointer">
+<span class="text-xs font-label tracking-widest uppercase text-secondary">Hydration</span>
+<div>
+<span class="block font-headline text-4xl font-bold">1.2 / 3L</span>
+<div class="flex gap-1 mt-2">
+<div class="h-1.5 w-8 rounded-full bg-secondary"></div>
+<div class="h-1.5 w-8 rounded-full bg-secondary"></div>
+<div class="h-1.5 w-8 rounded-full bg-secondary-dim/30"></div>
+<div class="h-1.5 w-8 rounded-full bg-secondary-dim/30"></div>
+</div>
+</div>
+</div>
+<div class="bg-tertiary-container/20 p-10 rounded-xl space-y-6 flex flex-col justify-between h-64 hover:bg-tertiary-container/30 transition-colors cursor-pointer">
+<span class="text-xs font-label tracking-widest uppercase text-tertiary">Sleep Quality</span>
+<div>
+<span class="block font-headline text-4xl font-bold">Deep</span>
+<span class="text-on-surface-variant">8h 12m tracked</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-stone-50 dark:bg-stone-950 w-full py-12 px-8 mt-20">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="space-y-2">
+<div class="font-epilogue font-bold text-emerald-800 text-xl">SlickByte</div>
+<p class="text-stone-400 font-manrope text-sm leading-relaxed max-w-xs text-center md:text-left">
+                    Cultivating a deeper connection with the food that fuels your soul.
+                </p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-stone-400 hover:text-emerald-600 transition-colors font-manrope text-sm" href="#">Privacy</a>
+<a class="text-stone-400 hover:text-emerald-600 transition-colors font-manrope text-sm" href="#">Terms</a>
+<a class="text-stone-400 hover:text-emerald-600 transition-colors font-manrope text-sm" href="#">Methodology</a>
+<a class="text-stone-400 hover:text-emerald-600 transition-colors font-manrope text-sm" href="#">Contact</a>
+</div>
+<div class="text-stone-400 font-manrope text-sm text-center md:text-right">© 2024 SlickByte. The Living Atelier.</div>
+</div>
+</footer>
+</body></html>

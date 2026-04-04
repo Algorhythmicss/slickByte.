@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SlickByte - Analytics Diary</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&amp;family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-fixed-variant": "#674b31",
+            "surface-tint": "#5a694b",
+            "tertiary-container": "#f3caa8",
+            "tertiary-dim": "#705238",
+            "surface-dim": "#e4e3d6",
+            "secondary-dim": "#6d4e6f",
+            "on-surface": "#373831",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#e4bc9b",
+            "on-surface-variant": "#64655c",
+            "primary-container": "#d7e8c3",
+            "error-dim": "#821a01",
+            "inverse-surface": "#0e0e0c",
+            "surface-container": "#f6f4ec",
+            "error": "#b23d21",
+            "surface-bright": "#fffcf7",
+            "secondary-container": "#ffd6fe",
+            "outline-variant": "#babaaf",
+            "on-secondary-fixed": "#523555",
+            "surface": "#fffcf7",
+            "outline": "#818178",
+            "surface-container-high": "#f0eee4",
+            "surface-variant": "#eae9dd",
+            "on-tertiary-fixed": "#482f17",
+            "secondary-fixed": "#ffd6fe",
+            "on-primary": "#ffffff",
+            "tertiary": "#7d5e43",
+            "primary-fixed-dim": "#c9dab5",
+            "primary-fixed": "#d7e8c3",
+            "surface-container-highest": "#eae9dd",
+            "inverse-on-surface": "#9e9d98",
+            "secondary-fixed-dim": "#f0c8ef",
+            "primary": "#5a694b",
+            "on-primary-fixed": "#364329",
+            "on-error": "#ffffff",
+            "secondary": "#7a597c",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#373831",
+            "on-primary-fixed-variant": "#516043",
+            "primary-dim": "#4e5d40",
+            "inverse-primary": "#e6f7d0",
+            "on-secondary-fixed-variant": "#715172",
+            "surface-container-low": "#fcf9f3",
+            "background": "#fffcf7",
+            "on-secondary-container": "#664768",
+            "on-tertiary-container": "#5d4228",
+            "tertiary-fixed": "#f3caa8",
+            "on-primary-container": "#48563a",
+            "on-error-container": "#671200",
+            "on-secondary": "#ffffff",
+            "error-container": "#fa7150"
+          },
+          fontFamily: {
+            "headline": ["Epilogue"],
+            "body": ["Manrope"],
+            "label": ["Manrope"]
+          },
+          borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .whispr-flow-gradient {
+      background: linear-gradient(45deg, #5a694b, #d7e8c3);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+    }
+    .asymmetric-radius {
+      border-radius: 2rem 3rem 1rem 3rem;
+    }
+    body {
+      color: #373831;
+    }
+  </style>
+</head>
+<body class="bg-surface font-body selection:bg-primary-container">
+<!-- TopNavBar Navigation Shell -->
+<nav class="bg-white/70 dark:bg-stone-900/70 backdrop-blur-xl docked full-width top-0 z-50 sticky shadow-[0_20px_40px_rgba(81,96,67,0.06)] no-border tonal-transition">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-bold text-emerald-900 dark:text-emerald-100 font-epilogue tracking-tight">SlickByte</div>
+<!-- Desktop Navigation -->
+<div class="hidden md:flex items-center gap-8">
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-manrope" href="#">Explore</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-manrope" href="#">Diary</a>
+<a class="text-emerald-900 dark:text-emerald-100 font-semibold border-b-2 border-emerald-800 dark:border-emerald-200 pb-1 font-manrope" href="#">Analytics</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-manrope" href="#">Community</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="whispr-flow-gradient text-white px-6 py-2.5 rounded-full font-medium hover:opacity-90 active:scale-95 transition-all hidden md:block">Upload Meal</button>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined p-2 text-stone-500 hover:bg-stone-100/50 rounded-full cursor-pointer transition-all">notifications</span>
+<span class="material-symbols-outlined p-2 text-stone-500 hover:bg-stone-100/50 rounded-full cursor-pointer transition-all">account_circle</span>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-8 py-12 md:py-20">
+<!-- Hero Section: Header -->
+<header class="mb-16">
+<span class="font-label text-xs uppercase tracking-[0.2em] text-primary font-bold mb-4 block">The Memory Log</span>
+<h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-[-0.04em] text-on-surface leading-tight max-w-3xl">
+        Your body's <span class="text-primary italic">rhythm</span>, visualized.
+      </h1>
+</header>
+<!-- Analytics Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Weekly Calorie/Macro Graph Card -->
+<section class="lg:col-span-8 bg-surface-container rounded-xl p-8 relative overflow-hidden">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h2 class="font-headline text-2xl font-bold text-on-surface mb-1">Weekly Energy Flow</h2>
+<p class="text-on-surface-variant font-body">Average intake: 2,140 kcal</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Proteins</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-tertiary"></div>
+<span class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Fats</span>
+</div>
+</div>
+</div>
+<!-- Simulated Smooth Curve Graph -->
+<div class="relative h-64 w-full flex items-end justify-between px-2">
+<!-- Background Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none">
+<div class="border-b border-on-surface-variant w-full h-0"></div>
+<div class="border-b border-on-surface-variant w-full h-0"></div>
+<div class="border-b border-on-surface-variant w-full h-0"></div>
+<div class="border-b border-on-surface-variant w-full h-0"></div>
+</div>
+<!-- Mock Graph Bars with Curves (Visual Representation) -->
+<div class="relative group h-full w-12 flex flex-col justify-end">
+<div class="w-full bg-primary/20 rounded-t-full h-[60%] absolute bottom-0 transition-all group-hover:bg-primary/30"></div>
+<div class="w-full bg-primary rounded-t-full h-[40%] absolute bottom-0"></div>
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-label text-on-surface-variant">MON</span>
+</div>
+<div class="relative group h-full w-12 flex flex-col justify-end">
+<div class="w-full bg-primary/20 rounded-t-full h-[75%] absolute bottom-0 transition-all group-hover:bg-primary/30"></div>
+<div class="w-full bg-primary rounded-t-full h-[55%] absolute bottom-0"></div>
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-label text-on-surface-variant">TUE</span>
+</div>
+<div class="relative group h-full w-12 flex flex-col justify-end">
+<div class="w-full bg-primary/20 rounded-t-full h-[65%] absolute bottom-0 transition-all group-hover:bg-primary/30"></div>
+<div class="w-full bg-primary rounded-t-full h-[45%] absolute bottom-0"></div>
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-label text-on-surface-variant">WED</span>
+</div>
+<div class="relative group h-full w-12 flex flex-col justify-end">
+<div class="w-full bg-primary/20 rounded-t-full h-[90%] absolute bottom-0 transition-all group-hover:bg-primary/30"></div>
+<div class="w-full bg-primary rounded-t-full h-[70%] absolute bottom-0"></div>
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-label text-on-surface-variant text-primary font-bold">THU</span>
+</div>
+<div class="relative group h-full w-12 flex flex-col justify-end">
+<div class="w-full bg-primary/20 rounded-t-full h-[70%] absolute bottom-0 transition-all group-hover:bg-primary/30"></div>
+<div class="w-full bg-primary rounded-t-full h-[50%] absolute bottom-0"></div>
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-label text-on-surface-variant">FRI</span>
+</div>
+<div class="relative group h-full w-12 flex flex-col justify-end">
+<div class="w-full bg-primary/20 rounded-t-full h-[50%] absolute bottom-0 transition-all group-hover:bg-primary/30"></div>
+<div class="w-full bg-primary rounded-t-full h-[30%] absolute bottom-0"></div>
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-label text-on-surface-variant">SAT</span>
+</div>
+<div class="relative group h-full w-12 flex flex-col justify-end">
+<div class="w-full bg-primary/20 rounded-t-full h-[60%] absolute bottom-0 transition-all group-hover:bg-primary/30"></div>
+<div class="w-full bg-primary rounded-t-full h-[40%] absolute bottom-0"></div>
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-label text-on-surface-variant">SUN</span>
+</div>
+</div>
+</section>
+<!-- Nutrition Insights Side Card -->
+<section class="lg:col-span-4 flex flex-col gap-8">
+<div class="bg-primary text-on-primary p-8 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-4xl mb-4" data-weight="fill">auto_awesome</span>
+<h3 class="font-headline text-2xl font-bold mb-2 leading-tight">Insight: Earthy Fiber</h3>
+<p class="font-body opacity-90 text-sm leading-relaxed mb-6">Your energy levels are 14% higher on days where you consume 30g+ of fiber before 11 AM.</p>
+<button class="bg-white text-primary px-6 py-2 rounded-full text-sm font-bold shadow-xl transition-transform active:scale-95">Explore Plan</button>
+</div>
+<!-- Decorative Background Image -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 opacity-20 transition-transform group-hover:scale-110">
+<img alt="" class="w-full h-full object-cover rounded-full" data-alt="close-up of a healthy bowl with vibrant greens and seeds with soft natural studio lighting and shallow depth of field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhJd827CjolsHFyoSexzexXFIOe5AklfCXuGiyip_EtytFjNXNqll2xbT4LJGd-200j4_OrLHejNm1jfOllJTfFBFsjza3l2ycjfhljXQ4ZOGI5vSyYucjaxqSCfixU6geJIoPup6oEdYMAN16FgaaRmCrrmLHIk3ClkAhCPBpCq5J8Ev_N2iSGGiQjgmGC9xq_zq9SqXvHnzjQMzACgJj0kJ0UJS3lnNYCNQvGN3JWRoVauMyuCRDlQAkFvDncWD4UAW8aTfX0jg"/>
+</div>
+</div>
+<div class="bg-tertiary-container p-8 rounded-xl">
+<h3 class="font-headline text-xl font-bold text-on-tertiary-container mb-4">Metabolic State</h3>
+<div class="flex items-center gap-4 mb-4">
+<div class="flex-1 bg-white/40 h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[65%]"></div>
+</div>
+<span class="font-label text-xs font-bold text-on-tertiary-container">RECOVERY</span>
+</div>
+<p class="text-on-tertiary-container/80 text-sm font-body">Current phase favors complex grains and slow-release proteins.</p>
+</div>
+</section>
+<!-- Daily Log Feed (Asymmetric Layout) -->
+<section class="lg:col-span-12">
+<div class="flex items-end justify-between mb-12">
+<div>
+<h2 class="font-headline text-3xl font-bold text-on-surface">Daily Log Feed</h2>
+<p class="text-on-surface-variant font-body">Capturing your culinary narrative</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-full border border-outline-variant/30 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+<button class="p-2 rounded-full border border-outline-variant/30 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+<!-- Meal Card 1 -->
+<div class="group">
+<div class="relative mb-6 rounded-lg overflow-hidden h-72">
+<img alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="aesthetic overhead shot of avocado toast with poached egg on ceramic plate with soft shadows and morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRkuE-poyWDWg4F0cL9r20aM_L6qRq2wN0wdoAbNOGkNyU97HMdyjWRezN7RM8CplhlX5XPBE8KWtQEycLowHQL2U3JKQ_pi6MvuVuP_qt829VBt4_t3M8ssG-VK_UDa0cmvFNYTtXG-mIPMXF1Dyr7ZDMxMwCB30saMbstIKS9mGKmL26S6aGmhInmu_FUB9Ke2EgJHv6qU2KbNmDDbRXqGo6NCXWarAzSythEIXH3EuGCwEujJM2YBEXtF9WtXnJRPiaYRWvujQ"/>
+<div class="absolute top-4 left-4 glass-card px-4 py-1.5 rounded-full text-xs font-bold text-primary">08:30 AM</div>
+</div>
+<h4 class="font-headline text-xl font-bold text-on-surface mb-2">Morning Matcha Toast</h4>
+<div class="flex gap-4 mb-4">
+<span class="font-label text-[10px] tracking-widest text-on-surface-variant border-r border-outline-variant pr-4">420 KCAL</span>
+<span class="font-label text-[10px] tracking-widest text-on-surface-variant">PROTEIN: 18G</span>
+</div>
+<p class="text-on-surface-variant text-sm font-body leading-relaxed italic">"Started the day with sustained energy and high focus. The healthy fats provided a smooth metabolic curve."</p>
+</div>
+<!-- Meal Card 2 (Asymmetric Shift) -->
+<div class="group md:mt-12">
+<div class="relative mb-6 rounded-lg overflow-hidden h-80 asymmetric-radius">
+<img alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="vibrant poke bowl with fresh salmon edamame and radish slices on a neutral stone table in soft daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-lZGc7WisZi7c8j34jUlWtH_mYI8yaZ3-6bInSsg2H6F1RrLuHnjLRuHlS_etom3rgixWmmhCmO3mZC-UUvQ-0FRqI3KnnZVC8fXjpPyt71hjo2dZy7NYBaPWyrkRCQCxzoSxF83_7lbKo0k4QoMZ3LEtBOfVo1Qg1vM3kaXcZ4xMNJgN7gq2t9xJOd9y84z1SrqPASCIrOWoR3kMhwtWMGbhT3TpihIzMJ704oX6IYUsMZPOe92Ya_rt1zzrqx9rgaSeWLMw498"/>
+<div class="absolute top-4 left-4 glass-card px-4 py-1.5 rounded-full text-xs font-bold text-secondary">01:15 PM</div>
+</div>
+<h4 class="font-headline text-xl font-bold text-on-surface mb-2">Zen Garden Poke Bowl</h4>
+<div class="flex gap-4 mb-4">
+<span class="font-label text-[10px] tracking-widest text-on-surface-variant border-r border-outline-variant pr-4">610 KCAL</span>
+<span class="font-label text-[10px] tracking-widest text-on-surface-variant">PROTEIN: 42G</span>
+</div>
+<p class="text-on-surface-variant text-sm font-body leading-relaxed italic">"Rich in Omega-3s. A light yet fulfilling lunch that avoided the mid-afternoon slump."</p>
+</div>
+<!-- Meal Card 3 -->
+<div class="group">
+<div class="relative mb-6 rounded-lg overflow-hidden h-72">
+<img alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="colorful garden salad with roasted chickpeas and lemon dressing in a rustic clay bowl on a light linen surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7vMj5oX3Oj2XOVIzsE-ykxF0z5SXQ07Gar63owe_hmSuArgmlKPaAooxui9tq4bKtE1qZ8d2mLD0dFK6I7e3sw-11GhIqoGGFCIifFkYpKHZ19hI1GY6E4Ryxv1OgngC4OoaxmZfqTHM3ayWkxUL9bp7-I5I8QwA227kkTx5lSGN3KI7HrkuMDz9AKT6A7mY3o_1k6NQMnmyaRzFpogMiQqVMiwkOvu85LWH7VLtYPQJD3EU-zbFPMVQr-Y-QUSTnm0wv4u8MCLI"/>
+<div class="absolute top-4 left-4 glass-card px-4 py-1.5 rounded-full text-xs font-bold text-tertiary">07:45 PM</div>
+</div>
+<h4 class="font-headline text-xl font-bold text-on-surface mb-2">Sunset Harvest Bowl</h4>
+<div class="flex gap-4 mb-4">
+<span class="font-label text-[10px] tracking-widest text-on-surface-variant border-r border-outline-variant pr-4">380 KCAL</span>
+<span class="font-label text-[10px] tracking-widest text-on-surface-variant">PROTEIN: 12G</span>
+</div>
+<p class="text-on-surface-variant text-sm font-body leading-relaxed italic">"Low glycemic index to prepare the body for restful sleep. Fiber-dense and hydrating."</p>
+</div>
+</div>
+</section>
+<!-- Trends/Activity Progress Section -->
+<section class="lg:col-span-12 mt-12 bg-surface-container-low p-12 rounded-xl grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="flex flex-col items-center text-center">
+<div class="w-32 h-32 relative mb-4">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-dasharray="351.8" stroke-dashoffset="105.5" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-headline text-2xl font-bold">70%</div>
+</div>
+<span class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Hydration Goal</span>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-32 h-32 relative mb-4">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-secondary" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-dasharray="351.8" stroke-dashoffset="40.5" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-headline text-2xl font-bold">88%</div>
+</div>
+<span class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Sleep Quality</span>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-32 h-32 relative mb-4">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-tertiary" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-dasharray="351.8" stroke-dashoffset="190.5" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-headline text-2xl font-bold">45%</div>
+</div>
+<span class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Fiber Target</span>
+</div>
+<div class="flex flex-col justify-center">
+<h4 class="font-headline text-xl font-bold mb-2">Today's Summary</h4>
+<p class="text-on-surface-variant text-sm font-body mb-4">You're maintaining a steady energy baseline. Consider 10g more protein for recovery.</p>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-primary">trending_up</span>
+<span class="text-xs font-bold text-primary font-label tracking-tighter">CONSISTENCY +12%</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- AI Nutrition Bubble (Floating Action) -->
+<div class="fixed bottom-8 right-8 z-50">
+<div class="glass-card asymmetric-radius p-6 shadow-[0_20px_40px_rgba(81,96,67,0.1)] max-w-xs border border-white/50">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 whispr-flow-gradient rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-weight="fill">temp_preferences_custom</span>
+</div>
+<span class="font-headline font-bold text-sm">SlickByte AI</span>
+</div>
+<p class="text-xs font-body text-on-surface-variant mb-4">"I noticed you're logging more citrus today. This pairs well with your iron intake targets."</p>
+<button class="w-full py-2 bg-on-surface text-white rounded-full text-xs font-bold tracking-widest uppercase hover:opacity-90 transition-opacity">Full Report</button>
+</div>
+</div>
+<!-- Footer Shell -->
+<footer class="bg-stone-50 dark:bg-stone-950 w-full py-12 px-8 tonal-transition via background-color-shift mt-20">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="font-epilogue font-bold text-emerald-800 text-xl">SlickByte.</div>
+<div class="flex gap-8">
+<a class="text-stone-400 dark:text-stone-600 hover:text-emerald-600 transition-colors font-manrope text-sm leading-relaxed" href="#">© 2024 SlickByte. The Living Atelier.</a>
+<a class="text-stone-400 dark:text-stone-600 hover:text-emerald-600 transition-colors font-manrope text-sm leading-relaxed" href="#">© 2024 SlickByte. The Living Atelier.</a>
+<a class="text-stone-400 dark:text-stone-600 hover:text-emerald-600 transition-colors font-manrope text-sm leading-relaxed" href="#">© 2024 SlickByte. The Living Atelier.</a>
+<a class="text-stone-400 dark:text-stone-600 hover:text-emerald-600 transition-colors font-manrope text-sm leading-relaxed" href="#">© 2024 SlickByte. The Living Atelier.</a>
+</div>
+<div class="text-stone-400 dark:text-stone-600 font-manrope text-sm leading-relaxed">© 2024 SlickByte. The Living Atelier.</div>
+</div>
+</footer>
+</body></html>
