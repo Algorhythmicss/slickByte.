@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { Router, type IRouter, type Request, type Response } from "express";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
-import { Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { AnalyzeMealBody, AnalyzeMealResponse, GetMealInsightBody } from "@workspace/api-zod";
 import { isDatabaseConfigured, prisma } from "../lib/prisma";
 
