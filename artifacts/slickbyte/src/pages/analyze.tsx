@@ -159,6 +159,15 @@ function getAnalyzeErrorDetails(error: unknown): AnalyzeErrorDetails {
     };
   }
 
+  if (errorCode === "ai_quota_exceeded") {
+    return {
+      title: "Meal analysis is temporarily unavailable.",
+      description:
+        apiMessage ??
+        "The Gemini API quota is currently exhausted. Please try again later.",
+    };
+  }
+
   if (errorCode === "rate_limit_exceeded" || apiError?.status === 429) {
     return {
       title: "Daily scan limit reached.",

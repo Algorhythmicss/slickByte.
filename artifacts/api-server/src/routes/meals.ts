@@ -91,12 +91,38 @@ function getGeminiModel() {
   });
 }
 
+function isGeminiQuotaError(err: unknown) {
+  if (!err || typeof err !== "object") {
+    return false;
+  }
+
+  const maybeError = err as {
+    status?: number;
+    message?: string;
+  };
+
+  return (
+    maybeError.status === 429 &&
+    typeof maybeError.message === "string" &&
+    maybeError.message.includes("Quota exceeded")
+  );
+}
+
 function sendMealError(req: Request, res: Response, err: unknown, fallbackMessage: string) {
   if (err instanceof Error && err.message.includes("GEMINI_API_KEY")) {
     req.log.error({ err }, "Gemini API key is not configured");
     res.status(500).json({
       error: "config_error",
       message: "Gemini API key is missing or invalid in artifacts/api-server/.env",
+    });
+    return;
+  }
+
+  if (isGeminiQuotaError(err)) {
+    req.log.error({ err }, "Gemini API quota exceeded");
+    res.status(429).json({
+      error: "ai_quota_exceeded",
+      message: "Meal analysis is temporarily unavailable because the Gemini API quota has been exceeded. Please try again later.",
     });
     return;
   }
