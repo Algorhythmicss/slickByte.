@@ -1,4 +1,4 @@
-okay , so back to my app , Limitations of Vision Models and a Constraint-Based Approach
+ Limitations of Vision Models and a Constraint-Based Approach
 
 ⸻
 
