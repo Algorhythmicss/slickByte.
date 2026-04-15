@@ -22,6 +22,7 @@ export const HealthCheckResponse = zod.object({
 export const analyzeMealBodyMimeTypeDefault = `image/jpeg`;
 export const analyzeMealBodyPortionDefault = `medium`;
 export const analyzeMealBodyPlateSizeDefault = `medium_plate`;
+export const analyzeMealBodyReferenceObjectDefault = `none`;
 
 export const AnalyzeMealBody = zod.object({
   imageBase64: zod
@@ -43,14 +44,31 @@ export const AnalyzeMealBody = zod.object({
     .enum(["small_plate", "medium_plate", "large_plate"])
     .default(analyzeMealBodyPlateSizeDefault)
     .describe("Plate size used as a scale reference"),
+  referenceObject: zod
+    .enum(["none", "spoon", "fork", "phone"])
+    .default(analyzeMealBodyReferenceObjectDefault)
+    .describe("Optional visible object used as a rough scale reference"),
 });
 
 export const AnalyzeMealResponse = zod.object({
   foodName: zod.string().describe("Name of the detected food"),
   calories: zod.number().describe("Estimated calorie count"),
+  foodItems: zod
+    .array(zod.string())
+    .describe("Individually identified food items visible in the meal"),
+  portionAssumption: zod
+    .enum(["small", "medium", "large"])
+    .describe("Final portion assumption used for the estimate"),
+  reasoning: zod
+    .string()
+    .describe("Short explanation of how the estimate was derived"),
+  protein: zod.number().describe("Protein in grams"),
+  carbs: zod.number().describe("Carbohydrates in grams"),
+  fats: zod.number().describe("Fats in grams"),
+  fiber: zod.number().describe("Fiber in grams"),
   confidence: zod
     .enum(["high", "medium", "low"])
-    .describe("AI confidence level"),
+    .describe("Backend-derived confidence level based on user constraints"),
   quickInsight: zod
     .string()
     .describe("Quick nutritional insight (e.g. High carb, moderate protein)"),
@@ -78,9 +96,22 @@ export const GetMealInsightBody = zod.object({
   mealAnalysis: zod.object({
     foodName: zod.string().describe("Name of the detected food"),
     calories: zod.number().describe("Estimated calorie count"),
+    foodItems: zod
+      .array(zod.string())
+      .describe("Individually identified food items visible in the meal"),
+    portionAssumption: zod
+      .enum(["small", "medium", "large"])
+      .describe("Final portion assumption used for the estimate"),
+    reasoning: zod
+      .string()
+      .describe("Short explanation of how the estimate was derived"),
+    protein: zod.number().describe("Protein in grams"),
+    carbs: zod.number().describe("Carbohydrates in grams"),
+    fats: zod.number().describe("Fats in grams"),
+    fiber: zod.number().describe("Fiber in grams"),
     confidence: zod
       .enum(["high", "medium", "low"])
-      .describe("AI confidence level"),
+      .describe("Backend-derived confidence level based on user constraints"),
     quickInsight: zod
       .string()
       .describe("Quick nutritional insight (e.g. High carb, moderate protein)"),

@@ -12,7 +12,11 @@ model MealAnalysis {
   prompt       String   @default("")
   portion      String
   plateSize    String
+  referenceObject String @default("none")
   foodName     String
+  foodItems    String[]
+  portionAssumption String
+  reasoning    String
   calories     Float
   protein      Float
   carbs        Float
@@ -25,7 +29,7 @@ model MealAnalysis {
   ingredients  String[]
   createdAt    DateTime @default(now())
 
-  @@unique([imageHash, prompt, portion, plateSize])
+  @@unique([imageHash, prompt, portion, plateSize, referenceObject])
 }
 
 model UserRequest {
@@ -35,6 +39,7 @@ model UserRequest {
   prompt    String?
   portion   String
   plateSize String
+  referenceObject String @default("none")
   createdAt DateTime @default(now())
 
   @@index([imageHash])

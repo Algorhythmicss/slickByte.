@@ -7,7 +7,7 @@
  */
 
 /**
- * AI confidence level
+ * Backend-derived confidence level based on user constraints
  */
 export type MealAnalysisConfidence =
   (typeof MealAnalysisConfidence)[keyof typeof MealAnalysisConfidence];

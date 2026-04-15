@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { Router, type IRouter, type Request, type Response } from "express";
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType, type Schema } from "@google/generative-ai";
 import type { Prisma } from "@prisma/client";
 import { AnalyzeMealBody, AnalyzeMealResponse, GetMealInsightBody } from "@workspace/api-zod";
 import { isDatabaseConfigured, prisma } from "../lib/prisma";
@@ -10,14 +10,16 @@ const router: IRouter = Router();
 const GEMINI_KEY_PLACEHOLDERS = new Set(["your_actual_key_here", "changeme", "your_key_here"]);
 const DEFAULT_PORTION = "medium";
 const DEFAULT_PLATE_SIZE = "medium_plate";
+const DEFAULT_REFERENCE_OBJECT = "none";
 const CACHE_NOTE = "Based on a similar meal analyzed earlier";
 const DAILY_ANALYZE_LIMIT = 5;
 const RATE_LIMIT_ERROR = "rate_limit_exceeded";
-const CALORIE_MISMATCH_THRESHOLD = 0.2;
+const CALORIE_MISMATCH_THRESHOLD = 0.15;
 
 type AnalyzeMealResponseType = ReturnType<typeof AnalyzeMealResponse.parse>;
 type Portion = "small" | "medium" | "large";
 type PlateSize = "small_plate" | "medium_plate" | "large_plate";
+type ReferenceObject = "none" | "spoon" | "fork" | "phone";
 type CachedAnalyzeMealResponse = AnalyzeMealResponseType & {
   cached?: boolean;
   note?: string;
@@ -27,36 +29,41 @@ type MealAnalysisReview = {
   validationIssues: string[];
 };
 
-const ANALYZE_RESPONSE_SCHEMA = {
+const ANALYZE_AI_RESPONSE_SCHEMA: Schema = {
   type: SchemaType.OBJECT,
   required: [
     "foodName",
+    "foodItems",
+    "portionAssumption",
+    "reasoning",
     "calories",
-    "confidence",
+    "protein",
+    "carbs",
+    "fats",
+    "fiber",
     "quickInsight",
-    "macros",
     "healthScore",
     "suggestions",
     "ingredients",
   ],
   properties: {
     foodName: { type: SchemaType.STRING },
-    calories: { type: SchemaType.NUMBER },
-    confidence: {
+    foodItems: {
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
+    },
+    portionAssumption: {
       type: SchemaType.STRING,
-      enum: ["high", "medium", "low"],
+      format: "enum",
+      enum: ["small", "medium", "large"],
     },
+    reasoning: { type: SchemaType.STRING },
+    calories: { type: SchemaType.NUMBER },
+    protein: { type: SchemaType.NUMBER },
+    carbs: { type: SchemaType.NUMBER },
+    fats: { type: SchemaType.NUMBER },
+    fiber: { type: SchemaType.NUMBER },
     quickInsight: { type: SchemaType.STRING },
-    macros: {
-      type: SchemaType.OBJECT,
-      required: ["protein", "carbs", "fats", "fiber"],
-      properties: {
-        protein: { type: SchemaType.NUMBER },
-        carbs: { type: SchemaType.NUMBER },
-        fats: { type: SchemaType.NUMBER },
-        fiber: { type: SchemaType.NUMBER },
-      },
-    },
     healthScore: { type: SchemaType.NUMBER },
     suggestions: {
       type: SchemaType.ARRAY,
@@ -67,7 +74,7 @@ const ANALYZE_RESPONSE_SCHEMA = {
       items: { type: SchemaType.STRING },
     },
   },
-} as const;
+};
 
 function getGeminiModel() {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
@@ -83,7 +90,7 @@ function getGeminiModel() {
     systemInstruction: ANALYZE_SYSTEM_PROMPT,
     generationConfig: {
       responseMimeType: "application/json",
-     
+      responseSchema: ANALYZE_AI_RESPONSE_SCHEMA,
       temperature: 0.2,
       topP: 0.8,
       topK: 32,
@@ -131,38 +138,47 @@ function sendMealError(req: Request, res: Response, err: unknown, fallbackMessag
   res.status(500).json({ error: "server_error", message: fallbackMessage });
 }
 
-const ANALYZE_SYSTEM_PROMPT = `You are an expert nutritionist AI. Analyze the meal image carefully.
+const ANALYZE_SYSTEM_PROMPT = `You are a nutrition analysis assistant. You must estimate calories using a constraint-based approach. Do NOT guess blindly.
+
+Follow these steps STRICTLY:
+1. Identify all visible food items.
+2. Estimate plate coverage percentage for each item.
+3. Assume a baseline portion size = medium.
+4. Adjust portion using:
+   - user portion input (small/medium/large)
+   - plate size input
+5. If a reference object is present:
+   - spoon ≈ 15 cm
+   - fork ≈ 18 cm
+   - phone ≈ 15 cm
+   - use it ONLY as a rough scale reference
+6. Estimate calories and macros.
+7. Cross-check calories using macros:
+   calories ≈ 4*protein + 4*carbs + 9*fats
+8. If mismatch > 15%, correct the estimate.
 
 IMPORTANT:
-- The user has specified portion size and plate size.
-- Use plate size as a scale reference to estimate quantity.
-- Do NOT assume small portions unless clearly visible.
-- Be realistic and slightly conservative in calorie estimation.
-- Ensure macros are internally consistent with calories:
-  calories ≈ (protein*4 + carbs*4 + fats*9)
+- Do NOT assume perfect accuracy.
+- Be consistent rather than speculative.
+- Prefer conservative estimates over extreme ones.
+- Keep the reasoning concise and interpretable.
+- Return ONLY valid JSON.
 
-Return ONLY valid JSON.
-
-Double-check:
-- portion size estimation
-- macro consistency
-- ingredient plausibility
-
-Response format:
+JSON shape:
 {
-  "foodName": "string - name of the dish/food",
-  "calories": number - estimated calories,
-  "confidence": "high" | "medium" | "low",
-  "quickInsight": "string - one short phrase like 'High carb, moderate protein' or 'Balanced macros, low fat'",
-  "macros": {
-    "protein": number in grams,
-    "carbs": number in grams,
-    "fats": number in grams,
-    "fiber": number in grams
-  },
-  "healthScore": number from 1-10,
-  "suggestions": ["array of 2-3 specific health tips for this meal"],
-  "ingredients": ["array of main detected ingredients"]
+  "foodName": "string",
+  "foodItems": ["string"],
+  "portionAssumption": "small" | "medium" | "large",
+  "reasoning": "short explanation describing visible foods, plate coverage, and how the user constraints affected the estimate",
+  "calories": number,
+  "protein": number,
+  "carbs": number,
+  "fats": number,
+  "fiber": number,
+  "quickInsight": "string",
+  "healthScore": number,
+  "suggestions": ["string"],
+  "ingredients": ["string"]
 }`;
 
 const INSIGHT_PROMPTS: Record<string, string> = {
@@ -231,19 +247,65 @@ function cleanStringList(values: string[], minimumLength = 1) {
   return cleaned;
 }
 
-function buildAnalyzeUserMessage(prompt: string, portion: Portion, plateSize: PlateSize) {
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function parseNumber(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function parseString(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function parseStringArray(value: unknown) {
+  return Array.isArray(value) && value.every((item) => typeof item === "string")
+    ? (value as string[])
+    : [];
+}
+
+function describePlateSize(plateSize: PlateSize) {
+  return plateSize.replace("_", " ");
+}
+
+function deriveConfidence(
+  portion: Portion,
+  plateSize: PlateSize,
+  referenceObject: ReferenceObject,
+): AnalyzeMealResponseType["confidence"] {
+  if (referenceObject !== DEFAULT_REFERENCE_OBJECT) {
+    return "high";
+  }
+
+  if (portion !== DEFAULT_PORTION || plateSize !== DEFAULT_PLATE_SIZE) {
+    return "medium";
+  }
+
+  return "low";
+}
+
+function buildAnalyzeUserMessage(
+  prompt: string,
+  portion: Portion,
+  plateSize: PlateSize,
+  referenceObject: ReferenceObject,
+) {
   const lines = [
-    "Analyze this meal and provide nutritional information as JSON.",
+    "Analyze this meal and return nutritional information as JSON.",
     `User-selected portion size: ${portion}.`,
-    `User-selected plate size: ${plateSize}.`,
-    "Use the plate size as a scale reference for the serving volume.",
-    "Prefer realistic serving sizes and avoid underestimating calories.",
+    `User-selected plate size: ${describePlateSize(plateSize)}.`,
+    `Reference object in frame: ${referenceObject}.`,
+    "Use the user constraints to anchor your estimate instead of guessing from appearance alone.",
+    "If the reference object is 'none', do not invent one.",
+    "Prefer realistic and conservative serving sizes.",
   ];
 
   if (prompt) {
     lines.push(`Additional user context: "${prompt}"`);
   }
 
+  lines.push("Follow the required step-by-step reasoning process before returning the JSON.");
   lines.push("Double-check that calories stay internally consistent with protein, carbs, and fats.");
 
   return lines.join("\n");
@@ -261,14 +323,17 @@ function buildRefinementUserMessage(
   prompt: string,
   portion: Portion,
   plateSize: PlateSize,
+  referenceObject: ReferenceObject,
   previousResponse: string,
   validationIssues: string[],
 ) {
   const lines = [
     "Refine the previous meal analysis and return corrected JSON only.",
     `User-selected portion size: ${portion}.`,
-    `User-selected plate size: ${plateSize}.`,
+    `User-selected plate size: ${describePlateSize(plateSize)}.`,
+    `Reference object in frame: ${referenceObject}.`,
     "Re-check the image carefully and correct any weak, inconsistent, or implausible values.",
+    "Follow the same structured constraint-based method as the system instruction.",
     `Validation issues to fix: ${validationIssues.join("; ")}.`,
   ];
 
@@ -283,10 +348,11 @@ function buildRefinementUserMessage(
   return lines.join("\n");
 }
 
-function reviewMealAnalysis(raw: unknown): MealAnalysisReview {
-  const parsed = AnalyzeMealResponse.safeParse(raw);
-
-  if (!parsed.success) {
+function reviewMealAnalysis(
+  raw: unknown,
+  confidence: AnalyzeMealResponseType["confidence"],
+): MealAnalysisReview {
+  if (!isRecord(raw)) {
     return {
       analysis: null,
       validationIssues: ["missing_or_invalid_fields"],
@@ -294,20 +360,49 @@ function reviewMealAnalysis(raw: unknown): MealAnalysisReview {
   }
 
   const validationIssues: string[] = [];
-  const foodName = parsed.data.foodName.trim();
-  const quickInsight = parsed.data.quickInsight.trim();
-  const suggestions = cleanStringList(parsed.data.suggestions, 1);
-  const ingredients = cleanStringList(parsed.data.ingredients, 1);
+  const foodName = parseString(raw.foodName);
+  const foodItems = cleanStringList(parseStringArray(raw.foodItems), 1);
+  const portionAssumptionRaw = parseString(raw.portionAssumption);
+  const reasoning = parseString(raw.reasoning);
+  const quickInsight = parseString(raw.quickInsight);
+  const suggestions = cleanStringList(parseStringArray(raw.suggestions), 1);
+  const ingredients = cleanStringList(parseStringArray(raw.ingredients), 1) ?? foodItems;
+  const proteinValue = parseNumber(raw.protein);
+  const carbsValue = parseNumber(raw.carbs);
+  const fatsValue = parseNumber(raw.fats);
+  const fiberValue = parseNumber(raw.fiber);
+  const caloriesValue = parseNumber(raw.calories);
+  const healthScoreValue = parseNumber(raw.healthScore);
+  const portionAssumption =
+    portionAssumptionRaw === "small" ||
+    portionAssumptionRaw === "medium" ||
+    portionAssumptionRaw === "large"
+      ? portionAssumptionRaw
+      : null;
 
-  if (!foodName || !quickInsight || !suggestions || !ingredients) {
+  if (
+    !foodName ||
+    !foodItems ||
+    !portionAssumption ||
+    !reasoning ||
+    !quickInsight ||
+    !suggestions ||
+    !ingredients ||
+    proteinValue === null ||
+    carbsValue === null ||
+    fatsValue === null ||
+    fiberValue === null ||
+    caloriesValue === null ||
+    healthScoreValue === null
+  ) {
     validationIssues.push("missing_or_invalid_fields");
   }
 
-  const protein = roundToOneDecimal(parsed.data.macros.protein);
-  const carbs = roundToOneDecimal(parsed.data.macros.carbs);
-  const fats = roundToOneDecimal(parsed.data.macros.fats);
-  const fiber = roundToOneDecimal(parsed.data.macros.fiber);
-  const statedCalories = roundToOneDecimal(parsed.data.calories);
+  const protein = roundToOneDecimal(proteinValue ?? 0);
+  const carbs = roundToOneDecimal(carbsValue ?? 0);
+  const fats = roundToOneDecimal(fatsValue ?? 0);
+  const fiber = roundToOneDecimal(fiberValue ?? 0);
+  const statedCalories = roundToOneDecimal(caloriesValue ?? 0);
   const macroCalories = calculateMacroCalories(protein, carbs, fats);
 
   if (getCaloriesMismatchRatio(statedCalories, macroCalories) > CALORIE_MISMATCH_THRESHOLD) {
@@ -316,16 +411,12 @@ function reviewMealAnalysis(raw: unknown): MealAnalysisReview {
     );
   }
 
-  if (parsed.data.confidence === "low") {
-    validationIssues.push("low_confidence");
-  }
-
   const adjustedCalories =
     Math.abs(statedCalories - macroCalories) > Math.max(60, macroCalories * 0.15)
       ? Math.max(statedCalories, macroCalories)
       : statedCalories;
 
-  const numbers = [protein, carbs, fats, fiber, adjustedCalories, parsed.data.healthScore];
+  const numbers = [protein, carbs, fats, fiber, adjustedCalories, healthScoreValue ?? 0];
   const hasInvalidNumber = numbers.some((value) => !Number.isFinite(value) || value < 0);
 
   if (hasInvalidNumber) {
@@ -342,8 +433,15 @@ function reviewMealAnalysis(raw: unknown): MealAnalysisReview {
   return {
     analysis: AnalyzeMealResponse.parse({
       foodName,
+      foodItems,
+      portionAssumption,
+      reasoning,
       calories: roundToOneDecimal(adjustedCalories),
-      confidence: parsed.data.confidence,
+      protein,
+      carbs,
+      fats,
+      fiber,
+      confidence,
       quickInsight,
       macros: {
         protein,
@@ -351,7 +449,7 @@ function reviewMealAnalysis(raw: unknown): MealAnalysisReview {
         fats,
         fiber,
       },
-      healthScore: roundToOneDecimal(clamp(parsed.data.healthScore, 1, 10)),
+      healthScore: roundToOneDecimal(clamp(healthScoreValue ?? 0, 1, 10)),
       suggestions,
       ingredients,
     }),
@@ -386,16 +484,18 @@ async function getValidatedMealAnalysis(
   prompt: string,
   portion: Portion,
   plateSize: PlateSize,
+  referenceObject: ReferenceObject,
 ) {
+  const derivedConfidence = deriveConfidence(portion, plateSize, referenceObject);
   const firstPassContent = await generateMealAnalysisDraft(
     imageBase64,
     mimeType,
-    buildAnalyzeUserMessage(prompt, portion, plateSize),
+    buildAnalyzeUserMessage(prompt, portion, plateSize, referenceObject),
   );
 
   let firstPassReview: MealAnalysisReview;
   try {
-    firstPassReview = reviewMealAnalysis(parseGeminiJson(firstPassContent));
+    firstPassReview = reviewMealAnalysis(parseGeminiJson(firstPassContent), derivedConfidence);
   } catch {
     firstPassReview = {
       analysis: null,
@@ -408,7 +508,7 @@ async function getValidatedMealAnalysis(
   }
 
   req.log.info(
-    { validationIssues: firstPassReview.validationIssues, portion, plateSize },
+    { validationIssues: firstPassReview.validationIssues, portion, plateSize, referenceObject },
     "Running second Gemini refinement pass for meal analysis",
   );
 
@@ -419,6 +519,7 @@ async function getValidatedMealAnalysis(
       prompt,
       portion,
       plateSize,
+      referenceObject,
       firstPassContent,
       firstPassReview.validationIssues,
     ),
@@ -426,7 +527,7 @@ async function getValidatedMealAnalysis(
 
   let refinedReview: MealAnalysisReview;
   try {
-    refinedReview = reviewMealAnalysis(parseGeminiJson(refinedContent));
+    refinedReview = reviewMealAnalysis(parseGeminiJson(refinedContent), derivedConfidence);
   } catch {
     refinedReview = {
       analysis: null,
@@ -472,6 +573,7 @@ async function consumeDailyAnalyzeQuota(
   prompt: string,
   portion: Portion,
   plateSize: PlateSize,
+  referenceObject: ReferenceObject,
 ) {
   if (!prisma || !isDatabaseConfigured) {
     return { allowed: true as const };
@@ -481,7 +583,7 @@ async function consumeDailyAnalyzeQuota(
 
   try {
     const result = await prisma.$transaction(
-      async (tx) => {
+      async (tx: Prisma.TransactionClient) => {
         const requestCount = await tx.userRequest.count({
           where: {
             userKey,
@@ -502,6 +604,7 @@ async function consumeDailyAnalyzeQuota(
             prompt: prompt || null,
             portion,
             plateSize,
+            referenceObject,
           },
         });
 
@@ -530,6 +633,7 @@ async function getCachedMealAnalysis(
   prompt: string,
   portion: Portion,
   plateSize: PlateSize,
+  referenceObject: ReferenceObject,
 ) {
   if (!prisma || !isDatabaseConfigured) {
     return null;
@@ -538,11 +642,12 @@ async function getCachedMealAnalysis(
   try {
     const cachedAnalysis = await prisma.mealAnalysis.findUnique({
       where: {
-        imageHash_prompt_portion_plateSize: {
+        imageHash_prompt_portion_plateSize_referenceObject: {
           imageHash,
           prompt,
           portion,
           plateSize,
+          referenceObject,
         },
       },
     });
@@ -553,7 +658,14 @@ async function getCachedMealAnalysis(
 
     return toCachedResponse(AnalyzeMealResponse.parse({
       foodName: cachedAnalysis.foodName,
+      foodItems: cachedAnalysis.foodItems,
+      portionAssumption: cachedAnalysis.portionAssumption as Portion,
+      reasoning: cachedAnalysis.reasoning,
       calories: cachedAnalysis.calories,
+      protein: cachedAnalysis.protein,
+      carbs: cachedAnalysis.carbs,
+      fats: cachedAnalysis.fats,
+      fiber: cachedAnalysis.fiber,
       confidence: cachedAnalysis.confidence,
       quickInsight: cachedAnalysis.quickInsight,
       macros: {
@@ -567,7 +679,7 @@ async function getCachedMealAnalysis(
       ingredients: cachedAnalysis.ingredients,
     }));
   } catch (err) {
-    req.log.warn({ err, imageHash, portion, plateSize }, "Failed to read cached meal analysis");
+    req.log.warn({ err, imageHash, portion, plateSize, referenceObject }, "Failed to read cached meal analysis");
     return null;
   }
 }
@@ -578,6 +690,7 @@ async function storeMealAnalysis(
   prompt: string,
   portion: Portion,
   plateSize: PlateSize,
+  referenceObject: ReferenceObject,
   analysis: ReturnType<typeof AnalyzeMealResponse.parse>,
 ) {
   if (!prisma || !isDatabaseConfigured) {
@@ -587,18 +700,23 @@ async function storeMealAnalysis(
   try {
     await prisma.mealAnalysis.upsert({
       where: {
-        imageHash_prompt_portion_plateSize: {
+        imageHash_prompt_portion_plateSize_referenceObject: {
           imageHash,
           prompt,
           portion,
           plateSize,
+          referenceObject,
         },
       },
       update: {
         prompt,
         portion,
         plateSize,
+        referenceObject,
         foodName: analysis.foodName,
+        foodItems: analysis.foodItems,
+        portionAssumption: analysis.portionAssumption,
+        reasoning: analysis.reasoning,
         calories: analysis.calories,
         protein: analysis.macros.protein,
         carbs: analysis.macros.carbs,
@@ -615,7 +733,11 @@ async function storeMealAnalysis(
         prompt,
         portion,
         plateSize,
+        referenceObject,
         foodName: analysis.foodName,
+        foodItems: analysis.foodItems,
+        portionAssumption: analysis.portionAssumption,
+        reasoning: analysis.reasoning,
         calories: analysis.calories,
         protein: analysis.macros.protein,
         carbs: analysis.macros.carbs,
@@ -629,7 +751,7 @@ async function storeMealAnalysis(
       },
     });
   } catch (err) {
-    req.log.warn({ err, imageHash, portion, plateSize }, "Failed to store meal analysis");
+    req.log.warn({ err, imageHash, portion, plateSize, referenceObject }, "Failed to store meal analysis");
   }
 }
 
@@ -644,6 +766,7 @@ router.post("/meals/analyze", async (req, res) => {
     const normalizedPrompt = normalizePrompt(body.data.prompt);
     const portion = body.data.portion ?? DEFAULT_PORTION;
     const plateSize = body.data.plateSize ?? DEFAULT_PLATE_SIZE;
+    const referenceObject = body.data.referenceObject ?? DEFAULT_REFERENCE_OBJECT;
     const { imageBase64, mimeType } = body.data;
     const imageHash = hashImage(imageBase64);
     const userKey = getUserKey(req);
@@ -655,6 +778,7 @@ router.post("/meals/analyze", async (req, res) => {
       normalizedPrompt,
       portion,
       plateSize,
+      referenceObject,
     );
 
     if (!quotaResult.allowed) {
@@ -672,9 +796,10 @@ router.post("/meals/analyze", async (req, res) => {
       normalizedPrompt,
       portion,
       plateSize,
+      referenceObject,
     );
     if (cachedAnalysis) {
-      req.log.info({ imageHash, portion, plateSize }, "Returning cached meal analysis");
+      req.log.info({ imageHash, portion, plateSize, referenceObject }, "Returning cached meal analysis");
       res.json(cachedAnalysis);
       return;
     }
@@ -686,6 +811,7 @@ router.post("/meals/analyze", async (req, res) => {
       normalizedPrompt,
       portion,
       plateSize,
+      referenceObject,
     );
 
     if (!analysis) {
@@ -693,7 +819,15 @@ router.post("/meals/analyze", async (req, res) => {
       return;
     }
 
-    await storeMealAnalysis(req, imageHash, normalizedPrompt, portion, plateSize, analysis);
+    await storeMealAnalysis(
+      req,
+      imageHash,
+      normalizedPrompt,
+      portion,
+      plateSize,
+      referenceObject,
+      analysis,
+    );
 
     res.json(analysis);
   } catch (err) {

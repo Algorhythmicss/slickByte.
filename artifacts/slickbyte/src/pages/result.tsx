@@ -44,7 +44,7 @@ export default function Result() {
     insightMutation.mutate(
       { data: { mealAnalysis: analysis, insightType: type } },
       {
-        onSuccess: (data) => setInsight(data),
+        onSuccess: (data: MealInsight) => setInsight(data),
       }
     );
   };
@@ -53,6 +53,12 @@ export default function Result() {
     if (c === "high") return "bg-emerald-100 text-emerald-700 border-emerald-200";
     if (c === "medium") return "bg-amber-100 text-amber-700 border-amber-200";
     return "bg-red-100 text-red-700 border-red-200";
+  };
+
+  const getConfidenceLabel = (c: string) => {
+    if (c === "high") return "High confidence";
+    if (c === "medium") return "Medium confidence";
+    return "Low confidence (⚠️)";
   };
 
   const getHealthScoreColor = (score: number) => {
@@ -120,7 +126,7 @@ export default function Result() {
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${getConfidenceBadgeClass(analysis.confidence)}`}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                AI match: {analysis.confidence}
+                {getConfidenceLabel(analysis.confidence)}
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
                 <span className="material-symbols-outlined text-[14px]">lightbulb</span>
@@ -177,13 +183,47 @@ export default function Result() {
               <div>
                 <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground mb-2">Detected Ingredients</p>
                 <div className="flex flex-wrap gap-2">
-                  {analysis.ingredients.map((ing, i) => (
+                  {analysis.ingredients.map((ing: string, i: number) => (
                     <span key={i} className="px-3 py-1 bg-muted rounded-full text-xs font-semibold">
                       {ing}
                     </span>
                   ))}
                 </div>
               </div>
+            )}
+
+            {analysis.foodItems?.length > 0 && (
+              <div>
+                <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground mb-2">Visible Food Items</p>
+                <div className="flex flex-wrap gap-2">
+                  {analysis.foodItems.map((item: string, i: number) => (
+                    <span key={i} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold border border-primary/10">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(analysis.reasoning || analysis.portionAssumption) && (
+              <details className="rounded-2xl border border-border bg-muted/40 px-5 py-4">
+                <summary className="cursor-pointer list-none font-semibold text-sm text-foreground">
+                  See how this was estimated
+                </summary>
+                <div className="mt-4 space-y-3 text-sm text-muted-foreground">
+                  {analysis.portionAssumption && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-bold uppercase tracking-widest text-[11px] text-muted-foreground">Portion assumption</span>
+                      <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground border border-border capitalize">
+                        {analysis.portionAssumption}
+                      </span>
+                    </div>
+                  )}
+                  {analysis.reasoning && (
+                    <p className="leading-relaxed text-sm text-muted-foreground">{analysis.reasoning}</p>
+                  )}
+                </div>
+              </details>
             )}
           </div>
         </motion.div>
@@ -248,7 +288,7 @@ export default function Result() {
                 <p className="text-sm leading-relaxed text-muted-foreground mb-4">{insight.content}</p>
                 {insight.tips?.length > 0 && (
                   <ul className="space-y-2">
-                    {insight.tips.map((tip, i) => (
+                    {insight.tips.map((tip: string, i: number) => (
                       <li key={i} className="flex gap-2 text-sm items-start">
                         <span className="material-symbols-outlined text-primary text-[16px] mt-0.5 shrink-0">check_circle</span>
                         <span>{tip}</span>

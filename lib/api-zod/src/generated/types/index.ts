@@ -9,6 +9,7 @@
 export * from "./analyzeMealBody";
 export * from "./analyzeMealBodyPlateSize";
 export * from "./analyzeMealBodyPortion";
+export * from "./analyzeMealBodyReferenceObject";
 export * from "./errorResponse";
 export * from "./getMealInsightBody";
 export * from "./getMealInsightBodyInsightType";
@@ -16,4 +17,5 @@ export * from "./healthStatus";
 export * from "./macros";
 export * from "./mealAnalysis";
 export * from "./mealAnalysisConfidence";
+export * from "./mealAnalysisPortionAssumption";
 export * from "./mealInsight";

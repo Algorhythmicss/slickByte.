@@ -33,6 +33,19 @@ export const AnalyzeMealBodyPlateSize = {
   large_plate: "large_plate",
 } as const;
 
+/**
+ * Optional visible object used as a rough scale reference
+ */
+export type AnalyzeMealBodyReferenceObject =
+  (typeof AnalyzeMealBodyReferenceObject)[keyof typeof AnalyzeMealBodyReferenceObject];
+
+export const AnalyzeMealBodyReferenceObject = {
+  none: "none",
+  spoon: "spoon",
+  fork: "fork",
+  phone: "phone",
+} as const;
+
 export interface AnalyzeMealBody {
   /** Base64-encoded image data (without data URL prefix) */
   imageBase64: string;
@@ -44,10 +57,24 @@ export interface AnalyzeMealBody {
   portion?: AnalyzeMealBodyPortion;
   /** Plate size used as a scale reference */
   plateSize?: AnalyzeMealBodyPlateSize;
+  /** Optional visible object used as a rough scale reference */
+  referenceObject?: AnalyzeMealBodyReferenceObject;
 }
 
 /**
- * AI confidence level
+ * Final portion assumption used for the estimate
+ */
+export type MealAnalysisPortionAssumption =
+  (typeof MealAnalysisPortionAssumption)[keyof typeof MealAnalysisPortionAssumption];
+
+export const MealAnalysisPortionAssumption = {
+  small: "small",
+  medium: "medium",
+  large: "large",
+} as const;
+
+/**
+ * Backend-derived confidence level based on user constraints
  */
 export type MealAnalysisConfidence =
   (typeof MealAnalysisConfidence)[keyof typeof MealAnalysisConfidence];
@@ -74,7 +101,21 @@ export interface MealAnalysis {
   foodName: string;
   /** Estimated calorie count */
   calories: number;
-  /** AI confidence level */
+  /** Individually identified food items visible in the meal */
+  foodItems: string[];
+  /** Final portion assumption used for the estimate */
+  portionAssumption: MealAnalysisPortionAssumption;
+  /** Short explanation of how the estimate was derived */
+  reasoning: string;
+  /** Protein in grams */
+  protein: number;
+  /** Carbohydrates in grams */
+  carbs: number;
+  /** Fats in grams */
+  fats: number;
+  /** Fiber in grams */
+  fiber: number;
+  /** Backend-derived confidence level based on user constraints */
   confidence: MealAnalysisConfidence;
   /** Quick nutritional insight (e.g. High carb, moderate protein) */
   quickInsight: string;

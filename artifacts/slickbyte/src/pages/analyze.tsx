@@ -31,6 +31,12 @@ const PLATE_SIZE_OPTIONS = [
   { value: "medium_plate", label: "Medium plate", hint: "Regular dinner plate" },
   { value: "large_plate", label: "Large plate", hint: "Big thali or oversized plate" },
 ] as const;
+const REFERENCE_OBJECT_OPTIONS = [
+  { value: "none", label: "None", hint: "No scale object in the frame" },
+  { value: "spoon", label: "Spoon", hint: "Useful for close-up bowls or plates" },
+  { value: "fork", label: "Fork", hint: "Good rough length reference" },
+  { value: "phone", label: "Phone", hint: "Works well when placed beside the plate" },
+] as const;
 
 type AnalyzeErrorDetails = {
   title: string;
@@ -192,6 +198,7 @@ export default function Analyze() {
   const [prompt, setPrompt] = useState("");
   const [portion, setPortion] = useState<"small" | "medium" | "large">("medium");
   const [plateSize, setPlateSize] = useState<"small_plate" | "medium_plate" | "large_plate">("medium_plate");
+  const [referenceObject, setReferenceObject] = useState<"none" | "spoon" | "fork" | "phone">("none");
   const [isDragging, setIsDragging] = useState(false);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const [isPreparingUpload, setIsPreparingUpload] = useState(false);
@@ -263,6 +270,7 @@ export default function Analyze() {
             prompt: prompt.trim() || undefined,
             portion,
             plateSize,
+            referenceObject,
           },
         },
         {
@@ -271,7 +279,7 @@ export default function Analyze() {
             localStorage.setItem("slickbyte_image", imagePreview!);
             navigate("/result");
           },
-          onError: (error) => {
+          onError: (error: unknown) => {
             const details = getAnalyzeErrorDetails(error);
             toast({
               variant: "destructive",
@@ -441,6 +449,32 @@ export default function Analyze() {
             </AnimatePresence>
           </div>
 
+          <div className="rounded-[2rem] border border-border bg-white/80 p-6 shadow-sm">
+            <h2 className="font-epilogue text-xl font-bold">How to get the most accurate results</h2>
+            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <li className="flex gap-3">
+                <span className="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                <span>Use a top-down photo (avoid angled shots)</span>
+              </li>
+              <li className="flex gap-3">
+                <span className="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                <span>Include a reference object (spoon, fork, or phone)</span>
+              </li>
+              <li className="flex gap-3">
+                <span className="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                <span>Ensure the full plate is visible</span>
+              </li>
+              <li className="flex gap-3">
+                <span className="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                <span>Avoid blurry or low-light images</span>
+              </li>
+              <li className="flex gap-3">
+                <span className="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                <span>Select correct portion size before analyzing</span>
+              </li>
+            </ul>
+          </div>
+
           {imagePreview && !isAnalyzing && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -501,6 +535,36 @@ export default function Analyze() {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   This gets passed into the Gemini prompt so serving-size estimates use your plate as a scale cue.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold tracking-wider uppercase text-muted-foreground">
+                  Reference object
+                </label>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {REFERENCE_OBJECT_OPTIONS.map((option) => {
+                    const isActive = referenceObject === option.value;
+
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setReferenceObject(option.value)}
+                        className={`rounded-[1.5rem] border px-4 py-4 text-left transition-all ${
+                          isActive
+                            ? "border-primary bg-primary/10 shadow-[0_12px_30px_-18px_rgba(59,130,246,0.7)]"
+                            : "border-border bg-white hover:border-primary/40 hover:bg-muted/30"
+                        }`}
+                      >
+                        <p className="font-epilogue text-base font-bold text-foreground">{option.label}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{option.hint}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  A spoon, fork, or phone gives the backend a rough scale cue and boosts confidence.
                 </p>
               </div>
 

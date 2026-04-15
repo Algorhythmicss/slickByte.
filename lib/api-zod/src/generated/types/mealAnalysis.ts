@@ -7,13 +7,28 @@
  */
 import type { Macros } from "./macros";
 import type { MealAnalysisConfidence } from "./mealAnalysisConfidence";
+import type { MealAnalysisPortionAssumption } from "./mealAnalysisPortionAssumption";
 
 export interface MealAnalysis {
   /** Name of the detected food */
   foodName: string;
   /** Estimated calorie count */
   calories: number;
-  /** AI confidence level */
+  /** Individually identified food items visible in the meal */
+  foodItems: string[];
+  /** Final portion assumption used for the estimate */
+  portionAssumption: MealAnalysisPortionAssumption;
+  /** Short explanation of how the estimate was derived */
+  reasoning: string;
+  /** Protein in grams */
+  protein: number;
+  /** Carbohydrates in grams */
+  carbs: number;
+  /** Fats in grams */
+  fats: number;
+  /** Fiber in grams */
+  fiber: number;
+  /** Backend-derived confidence level based on user constraints */
   confidence: MealAnalysisConfidence;
   /** Quick nutritional insight (e.g. High carb, moderate protein) */
   quickInsight: string;

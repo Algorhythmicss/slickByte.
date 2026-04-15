@@ -7,6 +7,7 @@
  */
 import type { AnalyzeMealBodyPlateSize } from "./analyzeMealBodyPlateSize";
 import type { AnalyzeMealBodyPortion } from "./analyzeMealBodyPortion";
+import type { AnalyzeMealBodyReferenceObject } from "./analyzeMealBodyReferenceObject";
 
 export interface AnalyzeMealBody {
   /** Base64-encoded image data (without data URL prefix) */
@@ -19,4 +20,6 @@ export interface AnalyzeMealBody {
   portion?: AnalyzeMealBodyPortion;
   /** Plate size used as a scale reference */
   plateSize?: AnalyzeMealBodyPlateSize;
+  /** Optional visible object used as a rough scale reference */
+  referenceObject?: AnalyzeMealBodyReferenceObject;
 }

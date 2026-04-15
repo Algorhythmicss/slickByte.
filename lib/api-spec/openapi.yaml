@@ -120,6 +120,11 @@ components:
           enum: [small_plate, medium_plate, large_plate]
           default: medium_plate
           description: Plate size used as a scale reference
+        referenceObject:
+          type: string
+          enum: [none, spoon, fork, phone]
+          default: none
+          description: Optional visible object used as a rough scale reference
       required:
         - imageBase64
     MealAnalysis:
@@ -131,10 +136,34 @@ components:
         calories:
           type: number
           description: Estimated calorie count
+        foodItems:
+          type: array
+          items:
+            type: string
+          description: Individually identified food items visible in the meal
+        portionAssumption:
+          type: string
+          enum: [small, medium, large]
+          description: Final portion assumption used for the estimate
+        reasoning:
+          type: string
+          description: Short explanation of how the estimate was derived
+        protein:
+          type: number
+          description: Protein in grams
+        carbs:
+          type: number
+          description: Carbohydrates in grams
+        fats:
+          type: number
+          description: Fats in grams
+        fiber:
+          type: number
+          description: Fiber in grams
         confidence:
           type: string
           enum: [high, medium, low]
-          description: AI confidence level
+          description: Backend-derived confidence level based on user constraints
         quickInsight:
           type: string
           description: Quick nutritional insight (e.g. High carb, moderate protein)
@@ -162,6 +191,13 @@ components:
       required:
         - foodName
         - calories
+        - foodItems
+        - portionAssumption
+        - reasoning
+        - protein
+        - carbs
+        - fats
+        - fiber
         - confidence
         - quickInsight
         - macros
